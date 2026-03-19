@@ -15,11 +15,19 @@ public class Attack {
         this.type = type;
     }
 
-    public String getName() { return name; }
-    public int getBasePower() { return basePower; }
-    public AttackType getType() { return type; }
+    public String getName() {
+        return name;
+    }
+
+    public int getBasePower() {
+        return basePower;
+    }
+
+    public AttackType getType() {
+        return type;
+    }
 
     public enum AttackType {
-        NORMAL, SPECIAL, STATUS
+        NORMAL, SPECIAL, STATUS, CRITICAL
     }
 }

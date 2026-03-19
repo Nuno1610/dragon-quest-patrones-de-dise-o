@@ -1,7 +1,9 @@
 package com.taller.patrones.domain;
 
+import com.taller.patrones.application.command.Command;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Representa una batalla entre dos personajes.
@@ -15,27 +17,85 @@ public class Battle {
     private boolean finished;
     private int lastDamage;
     private String lastDamageTarget;
+    private final Stack<Command> history;
 
     public Battle(Character player, Character enemy) {
         this.player = player;
         this.enemy = enemy;
         this.battleLog = new ArrayList<>();
+        this.history = new Stack<>();
         this.finished = false;
         this.currentTurn = player.getSpeed() >= enemy.getSpeed() ? "player" : "enemy";
         log("¡Comienza la batalla! " + player.getName() + " vs " + enemy.getName());
     }
 
-    public Character getPlayer() { return player; }
-    public Character getEnemy() { return enemy; }
-    public String getCurrentTurn() { return currentTurn; }
-    public List<String> getBattleLog() { return battleLog; }
-    public boolean isFinished() { return finished; }
-    public int getLastDamage() { return lastDamage; }
-    public String getLastDamageTarget() { return lastDamageTarget; }
+    public Character getPlayer() {
+        return player;
+    }
 
-    public void log(String message) { battleLog.add(message); }
-    public void switchTurn() { currentTurn = "player".equals(currentTurn) ? "enemy" : "player"; }
-    public void finish(String winner) { finished = true; log("¡" + winner + " gana la batalla!"); }
-    public boolean isPlayerTurn() { return "player".equals(currentTurn); }
-    public void setLastDamage(int damage, String target) { this.lastDamage = damage; this.lastDamageTarget = target; }
+    public Character getEnemy() {
+        return enemy;
+    }
+
+    public String getCurrentTurn() {
+        return currentTurn;
+    }
+
+    public List<String> getBattleLog() {
+        return battleLog;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public int getLastDamage() {
+        return lastDamage;
+    }
+
+    public String getLastDamageTarget() {
+        return lastDamageTarget;
+    }
+
+    public void log(String message) {
+        battleLog.add(message);
+    }
+
+    public void switchTurn() {
+        currentTurn = "player".equals(currentTurn) ? "enemy" : "player";
+    }
+
+    public void finish(String winner) {
+        finished = true;
+        log("¡" + winner + " gana la batalla!");
+    }
+
+    public boolean isPlayerTurn() {
+        return "player".equals(currentTurn);
+    }
+
+    public void setLastDamage(int damage, String target) {
+        this.lastDamage = damage;
+        this.lastDamageTarget = target;
+    }
+
+    public void setCurrentTurn(String turn) {
+        this.currentTurn = turn;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public void executeCommand(Command command) {
+        command.execute();
+        history.push(command);
+    }
+
+    public void undoCommand() {
+        if (!history.isEmpty()) {
+            Command command = history.pop();
+            command.undo();
+        }
+    }
 }
